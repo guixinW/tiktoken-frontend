@@ -1,24 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Send, X } from 'lucide-react';
+import { X, Send } from 'lucide-react';
 import CommentItem from './CommentItem';
-import { mockComments } from '../utils/mockData';
+import { mockComments, mockVideos } from '../utils/mockData';
 import type { Comment, Video } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface CommentPanelProps {
-  video: Video;
   isOpen: boolean;
+  videoId: string | null;
   onClose: () => void;
 }
 
-const CommentPanel: React.FC<CommentPanelProps> = ({ video, isOpen, onClose }) => {
+const CommentPanel: React.FC<CommentPanelProps> = ({ isOpen, videoId, onClose }) => {
+  const [video, setVideo] = useState<Video | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
-    const videoComments = mockComments.filter(c => c.videoId === video.id);
-    setComments(videoComments);
-  }, [video.id]);
+    if (videoId) {
+      const foundVideo = mockVideos.find(v => v.id === videoId);
+      if (foundVideo) {
+        setVideo(foundVideo);
+        const videoComments = mockComments.filter(c => c.videoId === videoId);
+        setComments(videoComments);
+      }
+    } else {
+      // Reset when panel is closed and videoId is null
+      setVideo(null);
+      setComments([]);
+    }
+  }, [videoId]);
 
   const handleLikeComment = (commentId: string) => {
     setComments(prev => prev.map(comment => 
@@ -37,11 +48,11 @@ const CommentPanel: React.FC<CommentPanelProps> = ({ video, isOpen, onClose }) =
   };
 
   const handleSubmitComment = () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !videoId) return;
 
     const comment: Comment = {
       id: uuidv4(),
-      videoId: video.id,
+      videoId,
       author: {
         id: 'current-user',
         username: '当前用户',
@@ -64,22 +75,28 @@ const CommentPanel: React.FC<CommentPanelProps> = ({ video, isOpen, onClose }) =
     }
   };
 
+  if (!videoId) {
+    return null; // Don't render anything if there's no videoId
+  }
+
   return (
     <div className={`comment-panel ${isOpen ? 'open' : ''}`}>
-      <div className="comment-panel-header">
-        <h3>评论 ({comments.length})</h3>
+      <div className="comments-header">
         <button className="close-btn" onClick={onClose}>
           <X size={24} />
         </button>
+        <h2>评论 ({comments.length})</h2>
       </div>
 
-      <div className="video-info-section">
-        <img src={video.author.avatar} alt={video.author.username} className="author-avatar" />
-        <div className="video-details">
-          <h4>@{video.author.username}</h4>
-          <p>{video.description}</p>
+      {video && (
+        <div className="video-info-section">
+          <img src={video.author.avatar} alt={video.author.username} className="author-avatar" />
+          <div className="video-details">
+            <h3>@{video.author.username}</h3>
+            <p>{video.description}</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="comments-list">
         {comments.length > 0 ? (

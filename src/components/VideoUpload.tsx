@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X, Play } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Upload, X } from 'lucide-react';
 
 interface VideoUploadProps {
   onUpload: (file: File, title: string, description: string) => void;
@@ -14,10 +14,20 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload, onCancel }) => {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    // Cleanup function to revoke the object URL
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('video/')) {
       setSelectedFile(file);
+      // Create a new object URL for the selected file
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
@@ -28,6 +38,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload, onCancel }) => {
     
     setIsUploading(true);
     
+    // Simulate upload process
     setTimeout(() => {
       onUpload(selectedFile, title, description);
       setIsUploading(false);
@@ -37,7 +48,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload, onCancel }) => {
 
   const resetForm = () => {
     setSelectedFile(null);
-    setPreviewUrl('');
+    setPreviewUrl(''); // The useEffect cleanup will handle revocation
     setTitle('');
     setDescription('');
     if (fileInputRef.current) {
@@ -48,6 +59,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload, onCancel }) => {
   const handleCancel = () => {
     resetForm();
     onCancel();
+  };
+
+  const handleReselectClick = () => {
+    // Reset file and URL, then trigger file input
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -111,7 +129,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onUpload, onCancel }) => {
               <div className="upload-actions">
                 <button 
                   className="btn-secondary" 
-                  onClick={() => setSelectedFile(null)}
+                  onClick={handleReselectClick}
                   disabled={isUploading}
                 >
                   重新选择

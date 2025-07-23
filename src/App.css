@@ -553,19 +553,19 @@ body {
 .comment-panel {
   position: fixed;
   top: 0;
-  right: 0;
+  right: -400px; /* Start off-screen */
   width: 400px;
   height: 100vh;
   background: #161823;
   z-index: 1001;
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
+  box-shadow: -5px 0 15px rgba(0,0,0,0.2);
   transition: transform 0.3s ease-in-out;
 }
 
 .comment-panel.open {
-  transform: translateX(0);
+  transform: translateX(-400px);
 }
 
 .comment-panel-header {
@@ -602,7 +602,11 @@ body {
 @media (max-width: 768px) {
   .comment-panel {
     width: 100vw;
-    right: 0;
+    right: -100vw; /* Start off-screen */
+  }
+  
+  .comment-panel.open {
+    transform: translateX(-100vw);
   }
   
   .preview-section {

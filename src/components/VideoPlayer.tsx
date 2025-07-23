@@ -1,26 +1,23 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Heart, MessageCircle, Share, MoreHorizontal, Play } from 'lucide-react';
-import CommentPanel from './CommentPanel';
 import type { Video } from '../types';
 
 interface VideoPlayerProps {
   video: Video;
   onLike: (videoId: string) => void;
+  onComment: (videoId: string) => void;
   onShare: (videoId: string) => void;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onShare }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onComment, onShare }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isCommentPanelOpen, setIsCommentPanelOpen] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
         if (entry.isIntersecting && videoRef.current) {
-          videoRef.current.play();
+          videoRef.current.play().catch(error => console.error("Video play failed:", error));
           setIsPlaying(true);
         } else if (videoRef.current) {
           videoRef.current.pause();
@@ -30,11 +27,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onShare }) => 
       { threshold: 0.5 }
     );
 
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
+    const currentVideoRef = videoRef.current;
+    if (currentVideoRef) {
+      observer.observe(currentVideoRef);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      if (currentVideoRef) {
+        observer.unobserve(currentVideoRef);
+      }
+    };
   }, []);
 
   const togglePlay = () => {
@@ -43,18 +45,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onShare }) => 
         videoRef.current.pause();
         setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        videoRef.current.play().catch(error => console.error("Video play failed:", error));
         setIsPlaying(true);
       }
     }
   };
 
-  const handleComment = () => {
-    setIsCommentPanelOpen(true);
-  };
-
-  const handleCloseCommentPanel = () => {
-    setIsCommentPanelOpen(false);
+  const handleActionClick = (e: React.MouseEvent, action: () => void) => {
+    e.stopPropagation();
+    action();
   };
 
   const formatCount = (count: number): string => {
@@ -94,33 +93,27 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onShare }) => 
         <div className="video-actions">
           <button 
             className={`action-btn ${video.isLiked ? 'liked' : ''}`}
-            onClick={() => onLike(video.id)}
+            onClick={(e) => handleActionClick(e, () => onLike(video.id))}
           >
             <Heart size={32} fill={video.isLiked ? '#ff4757' : 'none'} />
             <span>{formatCount(video.likes)}</span>
           </button>
           
-          <button className="action-btn" onClick={handleComment}>
+          <button className="action-btn" onClick={(e) => handleActionClick(e, () => onComment(video.id))}>
             <MessageCircle size={32} />
             <span>{formatCount(video.comments)}</span>
           </button>
           
-          <button className="action-btn" onClick={() => onShare(video.id)}>
+          <button className="action-btn" onClick={(e) => handleActionClick(e, () => onShare(video.id))}>
             <Share size={32} />
             <span>{formatCount(video.shares)}</span>
           </button>
           
-          <button className="action-btn">
+          <button className="action-btn" onClick={(e) => e.stopPropagation()}>
             <MoreHorizontal size={32} />
           </button>
         </div>
       </div>
-
-      <CommentPanel 
-        video={video}
-        isOpen={isCommentPanelOpen}
-        onClose={handleCloseCommentPanel}
-      />
     </div>
   );
 };
