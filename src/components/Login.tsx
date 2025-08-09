@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { X } from 'lucide-react';
 
 interface LoginProps {
   onLogin: () => void;
@@ -10,7 +11,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onClose }) => {
   const [password, setPassword] = useState("");
 
   const handleLoginClick = () => {
-    // 在实际应用中，这里会进行真正的认证
+    // In a real app, authentication would happen here
     if (username && password) {
       onLogin();
     } else {
@@ -19,9 +20,13 @@ const Login: React.FC<LoginProps> = ({ onLogin, onClose }) => {
   };
 
   return (
-    <div className="login-modal-overlay">
-      <div className="login-modal-content">
+    <div className="login-modal-overlay" onClick={onClose}>
+      <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onClose}>
+          <X size={24} />
+        </button>
         <h2>登录</h2>
+        <p>登录后即可发布评论、点赞视频</p>
         <div className="login-form">
           <input
             type="text"
@@ -36,8 +41,9 @@ const Login: React.FC<LoginProps> = ({ onLogin, onClose }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button onClick={handleLoginClick}>登录</button>
-        <button onClick={onClose}>关闭</button>
+        <button className="btn-primary login-btn" onClick={handleLoginClick}>
+          登录
+        </button>
       </div>
     </div>
   );
