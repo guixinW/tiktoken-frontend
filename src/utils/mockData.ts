@@ -80,7 +80,59 @@ export const mockComments: Comment[] = [
   },
   {
     id: 'comment3',
-    videoId: '2',
+    videoId: '1',
+    author: {
+      id: 'user6',
+      username: '风景控',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    content: '大理真的太美了！我也想去',
+    likes: 45,
+    isLiked: false,
+    createdAt: '2024-01-14T16:00:00Z'
+  },
+    {
+    id: 'comment4',
+    videoId: '1',
+    author: {
+      id: 'user6',
+      username: '风景控',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    content: '大理真的太美了！我也想去',
+    likes: 45,
+    isLiked: false,
+    createdAt: '2024-01-14T16:00:00Z'
+  },
+    {
+    id: 'comment5',
+    videoId: '1',
+    author: {
+      id: 'user6',
+      username: '风景控',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    content: '大理真的太美了！我也想去',
+    likes: 45,
+    isLiked: false,
+    createdAt: '2024-01-14T16:00:00Z'
+  },
+    {
+    id: 'comment6',
+    videoId: '1',
+    author: {
+      id: 'user6',
+      username: '风景控',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    content: '大理真的太美了！我也想去',
+    likes: 45,
+    isLiked: false,
+    createdAt: '2024-01-14T16:00:00Z'
+  },
+    {
+    id: 'comment7',
+    videoId: '1',
     author: {
       id: 'user6',
       username: '风景控',
