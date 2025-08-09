@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Send } from 'lucide-react';
 import CommentItem from './CommentItem';
+import LoadingSpinner from './LoadingSpinner';
 import { mockComments, mockVideos } from '../utils/mockData';
 import type { Comment, Video } from '../types';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,21 +16,27 @@ const CommentPanel: React.FC<CommentPanelProps> = ({ isOpen, videoId, onClose })
   const [video, setVideo] = useState<Video | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
 
   useEffect(() => {
-    if (videoId) {
-      const foundVideo = mockVideos.find(v => v.id === videoId);
-      if (foundVideo) {
-        setVideo(foundVideo);
-        const videoComments = mockComments.filter(c => c.videoId === videoId);
-        setComments(videoComments);
-      }
-    } else {
-      // Reset when panel is closed and videoId is null
-      setVideo(null);
-      setComments([]);
+    if (isOpen && videoId) {
+      setStatus('loading');
+      // Simulate a network request to fetch comments
+      const timer = setTimeout(() => {
+        const foundVideo = mockVideos.find(v => v.id === videoId);
+        if (foundVideo) {
+          setVideo(foundVideo);
+          const videoComments = mockComments.filter(c => c.videoId === videoId);
+          setComments(videoComments);
+          setStatus('success');
+        } else {
+          setStatus('error');
+        }
+      }, 500); // Simulate a 500ms network delay
+
+      return () => clearTimeout(timer);
     }
-  }, [videoId]);
+  }, [isOpen, videoId]);
 
   const handleLikeComment = (commentId: string) => {
     setComments(prev => prev.map(comment => 
@@ -75,12 +82,8 @@ const CommentPanel: React.FC<CommentPanelProps> = ({ isOpen, videoId, onClose })
     }
   };
 
-  if (!videoId) {
-    return null; // Don't render anything if there's no videoId
-  }
-
   return (
-    <div className={`comment-panel ${isOpen ? 'open' : ''}`}>
+    <div className="comment-panel">
       <div className="comments-header">
         <button className="close-btn" onClick={onClose}>
           <X size={24} />
@@ -99,19 +102,24 @@ const CommentPanel: React.FC<CommentPanelProps> = ({ isOpen, videoId, onClose })
       )}
 
       <div className="comments-list">
-        {comments.length > 0 ? (
-          comments.map(comment => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              onLike={handleLikeComment}
-              onReply={handleReplyComment}
-            />
-          ))
-        ) : (
-          <div className="no-comments">
-            <p>还没有评论，快来抢沙发吧！</p>
-          </div>
+        {status === 'loading' && <LoadingSpinner />}
+        {status === 'error' && <div className="no-comments"><p>无法加载评论。</p></div>}
+        {status === 'success' && (
+          comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                onLike={handleLikeComment}
+                onReply={handleReplyComment}
+                style={{ animationDelay: `${index * 75}ms` }}
+              />
+            ))
+          ) : (
+            <div className="no-comments">
+              <p>还没有评论，快来抢沙发吧！</p>
+            </div>
+          )
         )}
       </div>
 

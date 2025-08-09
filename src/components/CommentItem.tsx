@@ -6,9 +6,10 @@ interface CommentItemProps {
   comment: Comment;
   onLike: (commentId: string) => void;
   onReply: (commentId: string) => void;
+  style?: React.CSSProperties;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ comment, onLike, onReply }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ comment, onLike, onReply, style }) => {
   const formatCount = (count: number): string => {
     if (count >= 10000) {
       return (count / 10000).toFixed(1) + '万';
@@ -35,7 +36,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, onLike, onReply }) =
   };
 
   return (
-    <div className="comment-item">
+    <div className="comment-item" style={style}>
       <img src={comment.author.avatar} alt={comment.author.username} className="comment-avatar" />
       <div className="comment-content">
         <div className="comment-header">
