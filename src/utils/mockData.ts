@@ -3,7 +3,7 @@ import type { Video, Comment } from '../types';
 export const mockVideos: Video[] = [
   {
     id: '1',
-    url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+    url: 'http://vjs.zencdn.net/v/oceans.mp4',
     title: '美食分享',
     description: '今天给大家分享一道超级好吃的家常菜！#美食 #家常菜',
     author: {
@@ -19,7 +19,7 @@ export const mockVideos: Video[] = [
   },
   {
     id: '2',
-    url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4',
+    url: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
     title: '旅行vlog',
     description: '云南大理的美景真的太震撼了！#旅行 #vlog #大理',
     author: {
@@ -35,7 +35,7 @@ export const mockVideos: Video[] = [
   },
   {
     id: '3',
-    url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_5mb.mp4',
+    url: 'https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/mp4/xgplayer-demo-360p.mp4',
     title: '搞笑日常',
     description: '哈哈哈哈哈，今天又被我家猫咪整笑了！#搞笑 #宠物 #日常',
     author: {
