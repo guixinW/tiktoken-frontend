@@ -48,7 +48,7 @@ function App() {
         <div className={`main-content-wrapper ${commentPanel.isOpen ? 'comment-panel-open' : ''}`}>
           <div className="app-content">
             <Routes>
-              <Route path="/" element={<Feed showLogin={showLogin} onCommentOpen={handleOpenCommentPanel} />} />
+              <Route path="/" element={<Feed showLogin={showLogin} onCommentOpen={handleOpenCommentPanel} onShowLogin={handleShowLogin} isLoggedIn={isLoggedIn} />} />
               <Route path="/upload" element={<Upload />} />
               <Route 
                 path="/profile" 
