@@ -7,9 +7,10 @@ interface VideoPlayerProps {
   onLike: (videoId: string) => void;
   onComment: (videoId: string) => void;
   onShare: (videoId: string) => void;
+  showLogin: boolean;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onComment, onShare }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onComment, onShare, showLogin }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -81,6 +82,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, onLike, onComment, onS
         )}
       </div>
       
+      {showLogin && <div className="video-glass-overlay"></div>}
+
       <div className="video-info">
         <div className="author-info">
           <img src={video.author.avatar} alt={video.author.username} className="avatar" />
